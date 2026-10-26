@@ -1,0 +1,58 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      # Database — points at the postgres service over the compose network
+      NUXT_DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-postgres}
+      NUXT_DATABASE_LOGGER: ${NUXT_DATABASE_LOGGER:-false}
+      # Better Auth
+      NUXT_BETTER_AUTH_SECRET: ${NUXT_BETTER_AUTH_SECRET}
+      NUXT_BETTER_AUTH_APP_NAME: ${NUXT_BETTER_AUTH_APP_NAME}
+      NUXT_BETTER_AUTH_BASE_URL: ${NUXT_BETTER_AUTH_BASE_URL}
+      # Logger
+      NUXT_LOGGER_DISCORD_WEBHOOK_URL: ${NUXT_LOGGER_DISCORD_WEBHOOK_URL:-}
+      # Mailer
+      NUXT_MAILER_SMTP_FROM: ${NUXT_MAILER_SMTP_FROM}
+      NUXT_MAILER_SMTP_HOST: ${NUXT_MAILER_SMTP_HOST}
+      NUXT_MAILER_SMTP_PORT: ${NUXT_MAILER_SMTP_PORT}
+      NUXT_MAILER_SMTP_SECURE: ${NUXT_MAILER_SMTP_SECURE}
+      NUXT_MAILER_SMTP_USER: ${NUXT_MAILER_SMTP_USER:-}
+      NUXT_MAILER_SMTP_PASS: ${NUXT_MAILER_SMTP_PASS:-}
+      # Drive (S3)
+      NUXT_DRIVE_S3_BUCKET: ${NUXT_DRIVE_S3_BUCKET}
+      NUXT_DRIVE_S3_ACCESS_KEY_ID: ${NUXT_DRIVE_S3_ACCESS_KEY_ID}
+      NUXT_DRIVE_S3_SECRET_ACCESS_KEY: ${NUXT_DRIVE_S3_SECRET_ACCESS_KEY}
+      NUXT_DRIVE_S3_REGION: ${NUXT_DRIVE_S3_REGION}
+      NUXT_DRIVE_S3_ENDPOINT: ${NUXT_DRIVE_S3_ENDPOINT:-}
+      NUXT_DRIVE_S3_CDN_URL: ${NUXT_DRIVE_S3_CDN_URL:-}
+      # Stripe
+      NUXT_STRIPE_SECRET_KEY: ${NUXT_STRIPE_SECRET_KEY}
+      NUXT_STRIPE_WEBHOOK_SECRET_KEY: ${NUXT_STRIPE_WEBHOOK_SECRET_KEY}
+      # AI
+      NUXT_AI_OPENAI_API_KEY: ${NUXT_AI_OPENAI_API_KEY}
+    expose:
+      - '3000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:18.3-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U ${POSTGRES_USER:-postgres}']
+      interval: 2s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  postgres_data:

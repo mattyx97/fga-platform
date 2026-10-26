@@ -1,0 +1,56 @@
+services:
+  postgres:
+    image: postgres:18.3-alpine
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U postgres]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # rustfs:
+  #   image: rustfs/rustfs:latest
+  #   ports:
+  #     - '9000:9000'
+  #     - '9001:9001'
+  #   environment:
+  #     RUSTFS_VOLUMES: /data
+  #     RUSTFS_ADDRESS: 0.0.0.0:9000
+  #     RUSTFS_CONSOLE_ADDRESS: 0.0.0.0:9001
+  #     RUSTFS_CONSOLE_ENABLE: 'true'
+  #     RUSTFS_ACCESS_KEY: admin
+  #     RUSTFS_SECRET_KEY: admin
+  #   entrypoint: >
+  #     sh -c "mkdir -p /data/bucket && exec rustfs"
+  #   volumes:
+  #     - rustfs_data:/data
+  #   healthcheck:
+  #     test: [CMD, sh, -c, 'curl -f http://127.0.0.1:9000/health']
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 5s
+
+  # maildev:
+  #   image: maildev/maildev:latest
+  #   ports:
+  #     - '1080:1080'
+  #     - '1025:1025'
+  #   command: bin/maildev --web 1080 --smtp 1025
+  #   healthcheck:
+  #     test: [CMD, sh, -c, 'wget -q --spider http://127.0.0.1:1080 || exit 1']
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 5s
+
+volumes:
+  postgres_data:
+  # rustfs_data:

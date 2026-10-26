@@ -1,0 +1,45 @@
+{
+  // NUXT UI
+  "file_types": {
+    "tailwindcss": ["css"]
+  },
+
+  // ANTFU ESLINT
+  // Disable formatOnSave-style external formatters; ESLint is the formatter
+  "languages": {
+    "JavaScript": { "formatter": [{ "code_action": "source.fixAll.eslint" }] },
+    "TypeScript": { "formatter": [{ "code_action": "source.fixAll.eslint" }] },
+    "TSX": { "formatter": [{ "code_action": "source.fixAll.eslint" }] },
+    "Vue.js": { "formatter": [{ "code_action": "source.fixAll.eslint" }] }
+  },
+
+  "lsp": {
+    "tailwindcss-language-server": {
+      "settings": {
+        "classAttributes": ["class", "ui"],
+        "experimental": {
+          "classRegex": [
+            ["ui:\\s*{([^)]*)\\s*}", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+          ]
+        }
+      }
+    },
+    "eslint": {
+      "settings": {
+        // Silent the stylistic rules in your IDE, but still auto fix them
+        "rulesCustomizations": [
+          { "rule": "style/*", "severity": "off", "fixable": true },
+          { "rule": "format/*", "severity": "off", "fixable": true },
+          { "rule": "*-indent", "severity": "off", "fixable": true },
+          { "rule": "*-spacing", "severity": "off", "fixable": true },
+          { "rule": "*-spaces", "severity": "off", "fixable": true },
+          { "rule": "*-order", "severity": "off", "fixable": true },
+          { "rule": "*-dangle", "severity": "off", "fixable": true },
+          { "rule": "*-newline", "severity": "off", "fixable": true },
+          { "rule": "*quotes", "severity": "off", "fixable": true },
+          { "rule": "*semi", "severity": "off", "fixable": true }
+        ]
+      }
+    }
+  }
+}
